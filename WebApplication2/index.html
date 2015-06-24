@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Amazon Login Example</title>
+
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.35.min.js"></script>
+
+    <script>
+        // Initialize the Amazon Cognito credentials provider
+        //AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        //    IdentityPoolId: 'us-east-1:a9f52016-6b82-41e4-9345-b5117532b498',
+        //});
+    </script>
+
+
+</head>
+
+<body>
+    <div id="amazon-root"></div>
+    <script type="text/javascript">
+
+        window.onAmazonLoginReady = function () {
+            amazon.Login.setClientId('amzn1.application-oa2-client.7a339029079f4557b24743f1cee35983');
+        };
+        (function (d) {
+            var a = d.createElement('script'); a.type = 'text/javascript';
+            a.async = true; a.id = 'amazon-login-sdk';
+            a.src = 'https://api-cdn.amazon.com/sdk/login1.js';
+            d.getElementById('amazon-root').appendChild(a);
+        })(document);
+
+    </script>
+
+    Amazon Cognito PoC
+
+    <a href="#" id="LoginWithAmazon">
+        <img border="0" alt="Login with Amazon"
+             src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png"
+             width="156" height="32" />
+    </a>
+
+    <script type="text/javascript">
+
+        var roleArn = 'arn:aws:iam::586697681161:role/test';
+
+
+        document.getElementById('LoginWithAmazon').onclick = function () {
+            //options = { scope: 'profile' };
+            //amazon.Login.authorize(options, 'https://localhost:44301/login.html');
+
+            amazon.Login.authorize({ scope: 'profile' }, function (response) {
+
+                if (response) {
+
+                    console.log(response);
+
+                    AWS.config.credentials = new AWS.WebIdentityCredentials({
+                        IdentityPoolId: 'us-east-1:a9f52016-6b82-41e4-9345-b5117532b498',
+                        RoleArn: roleArn,
+                        ProviderId: 'www.amazon.com',
+                        WebIdentityToken: response.access_token
+                    });
+
+                    AWS.config.region = 'us-east-1';
+
+                    
+
+                    var s3 = new AWS.S3({ params: { Bucket: 'vdocwebsite', Region: 'Ireland' } });
+                    console.log(s3.listObjects(null, function (error, data) {
+
+                        if (data) {
+                            console.log(data)
+                        }
+                        else {
+                            console.log(error);
+                        }
+
+                    }));
+                }
+                else {
+                    console.log("login error");
+                }
+
+            });
+
+            return false;
+        };
+
+    </script>
+
+    <script type="text/javascript">
+        document.getElementById('Logout').onclick = function () {
+            amazon.Login.logout();
+        };
+    </script>
+</body>
+
+</html>
