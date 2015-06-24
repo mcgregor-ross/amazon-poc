@@ -1,7 +1,6 @@
 ﻿## Links
 
 * https://localhost:44301/
-
 * http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
 * http://login.amazon.com/website
 * http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/browser-configuring-wif.html
